@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-configmap
+data:
+  POSTGRES_USER: username
+  POSTGRES_DB: auth_db

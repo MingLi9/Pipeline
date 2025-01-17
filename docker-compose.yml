@@ -1,0 +1,183 @@
+services:
+  api-gateway:
+    image: dverse/gateway:ming_v1
+    ports:
+      - "8080:8080"
+    depends_on:
+      - user-service
+      - auth-service
+    networks:
+      - dverse-network
+    environment:
+      AUTH_SVC_ADDRESS: "auth-service:5000"
+      MARKETPLACE_SVC_ADDRESS: "marketplace-service:5001"
+      USER_SVC_ADDRESS: "user-service:5002"
+      NATS_SERVER_URL: "nats://nats-server:4222"
+      MATRIX_GATEWAY_URL: "http://matrix-gateway:8000"
+    restart: always
+
+  auth-service:
+    image: dverse/auth-service:latest
+    ports:
+      - "5000:5000"
+    networks:
+      - dverse-network
+    environment:
+      DATABASE_URL: postgresql://username:password@postgres/auth_db
+      JWT_SECRET_KEY: secretkey
+    depends_on:
+      - postgres
+    restart: always
+
+  marketplace-service:
+    image: dverse/marketplace-api:latest
+    ports:
+      - "5001:5001"
+    networks:
+      - dverse-network
+    depends_on:
+      marketplace-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://marketplace:marketplace@marketplace-db:5432/marketplace_db
+      MARKETPLACE_SVC_ADDRESS: "http://marketplace-service:5001"
+      JWT_SECRET_KEY: secretkey
+    restart: always
+
+  user-service:
+    image: dverse/user-service:latest
+    ports:
+      - "5002:5002"
+    networks:
+      - dverse-network
+    depends_on:
+      - auth-service
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://username:password@postgres/auth_db
+      AUTH_SVC_ADDRESS: "http://auth-service:5000"
+      JWT_SECRET_KEY: secretkey
+    restart: always
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./auth-service/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - dverse-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U username -d auth_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  marketplace-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: marketplace
+      POSTGRES_PASSWORD: marketplace
+      POSTGRES_DB: marketplace_db
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - dverse-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U marketplace -d marketplace_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  nats-server:
+    container_name: nats-server
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "9222:8222"
+    networks:
+      - dverse-network
+    volumes:
+      - ./nats-server/nats-server.conf:/etc/nats-server.conf
+    command: -c /etc/nats-server.conf
+
+  matrix-gateway:
+    image: dverse/matrix-gateway:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - dverse-network
+    depends_on:
+      - redis
+      - api-gateway
+    environment:
+      HOMESERVER_URL: https://matrix.org
+      API_GATEWAY_URL: "http://api-gateway:8080"
+      REDIS_URL: "redis"
+      INSTANCE_IP: "matrix-gateway"
+    restart: always
+
+  chat-assistant:
+    image: dverse/chat-assistant:latest
+    ports:
+      - "8090:8090"
+    networks:
+      - dverse-network
+    depends_on:
+      - api-gateway
+    environment:
+      NATS_SERVER_URL: "nats://nats-server:4222"
+      BOT_USERNAME: "dverse-chat-assistant"
+      BOT_PASSWORD: "dverse123!"
+    restart: always
+
+  frontend:
+    image: dverse/frontend:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - dverse-network
+    environment:
+      HOMESERVER_URL: https://matrix.org
+    restart: always
+
+  redis:
+    image: dverse/redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - dverse-network
+    volumes:
+      - redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    restart: always
+
+  test_runner:
+    image: dverse/test-runner:latest
+    networks:
+      - dverse-network
+    depends_on:
+      - api-gateway
+      - nats-server
+      - chat-assistant
+    environment:
+      NATS_SERVER_URL: "nats://nats-server:4222"
+      API_GATEWAY_URL: "http://api-gateway:8080"
+
+volumes:
+  redis-data:
+
+
+networks:
+  dverse-network:
+    driver: bridge

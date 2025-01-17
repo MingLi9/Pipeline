@@ -1,0 +1,26 @@
+# Use Alpine Linux as the base image with Python 3.12
+FROM python:3.12-alpine
+
+# Install the necessary packages
+RUN apk update \
+    && apk add --no-cache \
+    build-base \
+    python3-dev \
+    py3-pip \
+    && pip install --no-cache-dir --upgrade pip
+
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements.txt and install dependencies
+COPY ./requirements.txt /app
+RUN pip install --no-cache-dir --requirement /app/requirements.txt
+
+# Copy the rest of the application code
+COPY . /app
+
+# Expose the application's port (modify if your app uses a different port)
+EXPOSE 8000
+
+# Set the default command to run the application
+CMD ["python3", "run.py"]
