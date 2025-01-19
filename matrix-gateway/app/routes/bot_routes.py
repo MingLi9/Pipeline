@@ -32,17 +32,22 @@ async def creator_exists(creator_ip):
         return False  # Return False in case of any request error
 
 def fetch_creator_ip(username):
+    print("Fetch creator ip")
     client_data = redis_client.get(username)
     if not client_data:
         raise HTTPException(status_code=404, detail="Client not found in Redis")
 
+    print("JSON loads")
     client_data = json.loads(client_data)
     return client_data.get("instance_ip", "No IP found")
 
 @router.post("/add")
 async def add_bot(credentials: BotCredentials):
+    print("Enter /add function")
     # Check if the bot already exists in Redis
+    print("start check")
     if redis_client.exists(credentials.username):
+        print("Already in redis")
         creator_ip = fetch_creator_ip(credentials.username)
         print(f"creator ip = {creator_ip}")
         alive = False
@@ -53,9 +58,12 @@ async def add_bot(credentials: BotCredentials):
             return {"message": "Bot already exists"}
         else:
             redis_client.delete(credentials.username)
+    print("Credentials have username")
     # Create and start syncing the bot
     client = await create_client(credentials.username, credentials.password)
+    print("Client is created")
     await start_sync(client)
+    print("Client is started in sync")
     return {"message": f"Bot {credentials.username} added"}
 
 @router.get("/")

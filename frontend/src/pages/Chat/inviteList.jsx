@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./chat.module.css";
 
 const InviteList = ({ invites, onAcceptInvite }) => (
@@ -20,5 +21,14 @@ const InviteList = ({ invites, onAcceptInvite }) => (
         </ul>
     </div>
 );
+InviteList.propTypes = {
+    invites: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    onAcceptInvite: PropTypes.func.isRequired,
+};
 
 export default InviteList;

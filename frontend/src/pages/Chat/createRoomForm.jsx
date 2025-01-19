@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./chat.module.css";
 
 const CreateRoomForm = ({ newRoomName, setNewRoomName, onCreateRoom }) => (
@@ -16,5 +17,11 @@ const CreateRoomForm = ({ newRoomName, setNewRoomName, onCreateRoom }) => (
         </button>
     </div>
 );
+
+CreateRoomForm.propTypes = {
+    newRoomName: PropTypes.string.isRequired,
+    setNewRoomName: PropTypes.func.isRequired,
+    onCreateRoom: PropTypes.func.isRequired,
+};
 
 export default CreateRoomForm;

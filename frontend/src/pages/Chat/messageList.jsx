@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./chat.module.css";
 
 const MessageList = ({ messages }) => (
@@ -13,5 +14,13 @@ const MessageList = ({ messages }) => (
         </div>
     </div>
 );
+MessageList.propTypes = {
+    messages: PropTypes.arrayOf(
+        PropTypes.shape({
+            sender: PropTypes.string.isRequired,
+            content: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+};
 
 export default MessageList;

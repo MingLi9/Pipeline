@@ -3,6 +3,7 @@ import * as sdk from "matrix-js-sdk";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./login.module.css";
+import PropTypes from "prop-types";
 
 window.global = window;
 
@@ -69,6 +70,9 @@ const LoginPage = ({ onLoginComplete }) => {
             </button>
         </div>
     );
+};
+LoginPage.propTypes = {
+    onLoginComplete: PropTypes.func.isRequired,
 };
 
 export default LoginPage;

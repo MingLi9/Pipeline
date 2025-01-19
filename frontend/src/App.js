@@ -5,6 +5,7 @@ import Hub from "./pages/Hub";
 import Chat from "./pages/Chat";
 import Footer from "./components/Footer";
 import "./App.css";
+import PropTypes from 'prop-types';
 
 const Logout = ({ onLogout }) => {
   const navigate = useNavigate();
@@ -15,6 +16,10 @@ const Logout = ({ onLogout }) => {
   }, [onLogout, navigate]);
 
   return null;
+};
+
+Logout.propTypes = {
+  onLogout: PropTypes.func.isRequired,
 };
 
 const App = () => {

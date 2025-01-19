@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./chat.module.css";
 
 const RoomList = ({ rooms, onJoinRoom }) => (
@@ -16,5 +17,14 @@ const RoomList = ({ rooms, onJoinRoom }) => (
         </ul>
     </div>
 );
+RoomList.propTypes = {
+    rooms: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    onJoinRoom: PropTypes.func.isRequired,
+};
 
 export default RoomList;

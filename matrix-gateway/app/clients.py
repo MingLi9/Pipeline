@@ -48,7 +48,7 @@ async def create_client(username: str, password: str):
     return client
 
 async def get_client_from_pool(user_id: str) -> AsyncClient:
-    """Retrieve a client from Redis and recreate the AsyncClient."""
+    """Retrieve a client from Redis and recreate the AsyncClient."""    
     client_data = redis_client.get(user_id)
     if not client_data:
         raise HTTPException(status_code=404, detail="Client not found in Redis")
@@ -93,21 +93,25 @@ async def join_room(client: AsyncClient, room_id: str):
 
 async def on_invite_event(event: InviteEvent, client: AsyncClient):
     """Handle new room invites dynamically."""
-    try:
-        # Extract room_id and own_user_id from the event
-        room_id = event.room_id
-        user_id = event.own_user_id
+    room_id = event.room_id
+    user_id = event.own_user_id
 
+    try:
         print(f"Received an invite to room: {room_id} for user: {user_id}")
 
         # Fetch the client from Redis
-        target_client = await get_client_from_pool(user_id)
+        print(f"Fetching client from pool for user: {user_id}")
+        username = user_id[1:].split(":")[0]
+        
+        target_client = await get_client_from_pool(username)
         if target_client is None:
-            print(f"No client found in pool for user: {user_id}")
+            print(f"No client found in pool for user: {username}")
             return
 
-        print(f"Joining room {room_id} with user {user_id}")
+        print(f"Joining room {room_id} with user {username}")
         response = await target_client.join(room_id)
         print(f"Successfully joined room {room_id}: {response}")
+    except HTTPException as e:
+        print(f"HTTPException occurred while processing invite event for room {room_id}: {e.detail}")
     except Exception as e:
-        print(f"Error processing invite event for room {room_id}: {e}")
+        print(f"Exception occurred while processing invite event for room {room_id}: {e}")

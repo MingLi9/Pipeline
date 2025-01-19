@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./chat.module.css";
 
 const SendMessageForm = ({ newMessage, setNewMessage, onSendMessage }) => (
@@ -16,5 +17,11 @@ const SendMessageForm = ({ newMessage, setNewMessage, onSendMessage }) => (
         </button>
     </div>
 );
+
+SendMessageForm.propTypes = {
+    newMessage: PropTypes.string.isRequired,
+    setNewMessage: PropTypes.func.isRequired,
+    onSendMessage: PropTypes.func.isRequired,
+};
 
 export default SendMessageForm;

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styles from "./chat.module.css";
@@ -179,6 +180,9 @@ const Chat = ({ client }) => {
             )}
         </div>
     );
+};
+Chat.propTypes = {
+    client: PropTypes.object.isRequired,
 };
 
 export default Chat;

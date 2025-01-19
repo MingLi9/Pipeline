@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./chat.module.css";
 
 const InviteUserForm = ({ inviteUserId, setInviteUserId, onInviteUser }) => (
@@ -16,5 +17,11 @@ const InviteUserForm = ({ inviteUserId, setInviteUserId, onInviteUser }) => (
         </button>
     </div>
 );
+
+InviteUserForm.propTypes = {
+    inviteUserId: PropTypes.string.isRequired,
+    setInviteUserId: PropTypes.func.isRequired,
+    onInviteUser: PropTypes.func.isRequired,
+};
 
 export default InviteUserForm;
