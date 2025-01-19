@@ -7,7 +7,7 @@ const MessageList = ({ messages }) => (
         <h2>Messages</h2>
         <div className={styles.messageBox}>
             {messages.map((msg, index) => (
-                <div key={index} className={styles.message}>
+                <div key={msg.id} className={styles.message}>
                     <strong>{msg.sender}</strong>: {msg.content}
                 </div>
             ))}

@@ -3,7 +3,6 @@ from nats.aio.client import Client as NATS
 from aiohttp import web
 import json
 from datetime import datetime, timezone
-# from topic_finder import find_topic, clean_input_text, handle_short_inputs, refine_with_pipeline
 import uuid
 from dotenv import load_dotenv
 import os
@@ -55,32 +54,11 @@ async def handle_normal_message(data, subject):
     room_id = data.get("room_id", "unknown_room")
     original_message = data.get("message", "no_message")
 
-    response_message = original_message
-
-    # # # Call the find_topic function from topic_finder.py
-    # # response_message = find_topic(original_message)
-
-    # # Step 1: Clean the input text
-    # cleaned_text = clean_input_text(original_message)
-    
-    # # Step 2: Handle short or vague inputs
-    # processed_text = handle_short_inputs(cleaned_text)
-    # if "too short" in processed_text:  # Early return for short inputs
-    #     response_message = processed_text
-    # else:
-    #     # Step 3: Refine the input using the pipeline
-    #     response_message = refine_with_pipeline(processed_text)
-
-    # # Avoid echoing the input
-    # if response_message.strip().lower() == original_message.strip().lower():
-    #     response_message = "I'm not sure how to respond. Can you clarify?"
-
-
     # Prepare the response object
     payload_response = {
         "username": username,
         "room_id": room_id,
-        "message": response_message
+        "message": original_message
     }
     message_response = {
         "event_id": str(uuid.uuid4()),

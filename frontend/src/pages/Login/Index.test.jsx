@@ -1,7 +1,5 @@
 import React from "react";
-import { act } from "@testing-library/react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { ToastContainer } from "react-toastify";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import LoginPage from "./index";
 import * as sdk from "matrix-js-sdk";
 

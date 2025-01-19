@@ -110,7 +110,6 @@ async def handle_matrix_login(data):
 
             # Use the reusable API request function
             url = f"{matrix_gateway_url}/bots/add"
-            # url = "http://localhost:8000/bots/add"
             await send_api_request(url, api_payload)
         else:
             print("Invalid payload: Missing username or password.")
@@ -163,7 +162,6 @@ async def send_matrix_message(data):
 
         # Send the payload to the API endpoint
         url = f"{matrix_gateway_url}/messages/send"
-        # url = "http://localhost:8000/messages/send"
         await send_api_request(url, payload)
 
     except json.JSONDecodeError as e:

@@ -8,7 +8,7 @@ const Footer = () => {
         <footer className={styles.footer}>
             <ul className={styles.list}>
                 {apps.map((app, index) => (
-                    <li key={index} className={styles.listItem}>
+                    <li key={app.id} className={styles.listItem}>
                         <Link to={app.path} className={styles.link}>
                             {app.name}
                         </Link>
