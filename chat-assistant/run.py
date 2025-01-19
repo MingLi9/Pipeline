@@ -45,7 +45,7 @@ async def handle_specific_message(data):
         return True  # Indicates that the message has been handled
     return False  # Indicates the message is not handled here
 
-async def handle_normal_message(data, subject):
+async def handle_normal_message(data):
     """
     Handle the general messages.
     """
@@ -93,7 +93,7 @@ async def message_handler(msg):
             return
 
         # Otherwise, handle normal messages
-        await handle_normal_message(data, subject)
+        await handle_normal_message(data)
 
     except json.JSONDecodeError as e:
         print(f"JSONDecodeError: Invalid JSON received on '{subject}': {raw_data}")
